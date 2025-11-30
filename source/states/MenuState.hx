@@ -2,13 +2,12 @@ package states;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxState;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxSave;
 import flixel.util.FlxTimer;
 
-class MenuState extends FlxState {
+class MenuState extends TransitionState {
     var logo:FlxSprite;
     var edge:FlxSprite;
     var select:FlxSprite;
@@ -20,7 +19,7 @@ class MenuState extends FlxState {
 
     var newGame:FlxSprite;
 
-    var animatronics:Array<String> = ['candy', 'sindy', 'chester', 'ping', 'blank', 'rat', 'cat'];
+    final animatronics:Array<String> = ['candy', 'sindy', 'chester', 'ping', 'blank', 'rat', 'cat'];
     var animElapsed:Float;
 
     var redPos:Float = 0;
@@ -31,7 +30,7 @@ class MenuState extends FlxState {
         super.create();
         trace('menu starting');
 
-        FlxG.mouse.useSystemCursor = true;
+        FlxG.mouse.visible = true;
 
         var save:FlxSave = new FlxSave();
         save.bind('fnac2hx');
@@ -117,7 +116,7 @@ class MenuState extends FlxState {
         new FlxTimer().start(0.5, function(_) {
             for (spr in [logo, red, blue, green, newGame, select, deleteData, by, edge]) spr.visible = true;
             edge.animation.play('edge');
-            FlxG.sound.playMusic(Paths.music('Menu'));
+            FlxG.sound.playMusic(Paths.music('Menu'), 1, true);
             FlxG.sound.play(Paths.sound('whoosh'));
             FlxTween.tween(edge, {alpha: 0}, 1.0);
         });
@@ -139,5 +138,12 @@ class MenuState extends FlxState {
         red.x = redPos + Math.random() * 4 - 2;
         green.x = greenPos + Math.random() * 10 - 3;
         blue.x = bluePos + Math.random() * 15 - 9;
+
+        if (FlxG.mouse.justPressed) {
+            if (FlxG.mouse.overlaps(newGame)) {
+                FlxG.sound.music.stop();
+                FlxG.switchState(new IntroState());
+            }
+        }
     }
 }
